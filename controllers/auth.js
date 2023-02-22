@@ -45,7 +45,7 @@ exports.login = async (req, res, next) => {
   if (!user) {
     return res.status(400).json({ errors: { error: "User not found" } });
   } else {
-    const token = jwt.sign({ user }, process.env.SECRET_CODE);
+    const token = jwt.sign({ user }, process.env.SECRET_CODE,{ expiresIn: 60 * 60 * 24 * 7 });
     return res.json({
       token: token,
       success: "",
