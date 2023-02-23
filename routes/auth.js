@@ -9,7 +9,7 @@ router.post(
     body('firstName').isString(),
     body('lastName').isString(),
     body('email').isEmail(),
-    body('password').isLength({ min: 8 }),
+    body('password').isLength({ min: 8 }).withMessage("Password length must be greater than equal to 8"),
     body('account_type').isInt({min:0, max:1}),
     authController.register
 );
@@ -29,8 +29,8 @@ router.post(
 
 router.post(
     '/set_password',
-    body('new_password').isLength({ min: 8 }),
-    body('confirm_password').isLength({ min: 8 }),
+    body('new_password').isLength({ min: 8 }).withMessage("Password length must be greater than equal to 8"),
+    body('confirm_password').isLength({ min: 8 }).withMessage("Password length must be greater than equal to 8"),
     body('token_link').exists(),
     authController.resetPassword,
 );
