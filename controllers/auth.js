@@ -29,9 +29,14 @@ exports.register = async (req, res, next) => {
     account_type: req.body.account_type,
   });
 
+  const token = jwt.sign({ user }, process.env.SECRET_CODE, {
+    expiresIn: 60 * 60 * 24 * 7,
+  });
+
   return res.json({
-    success: "",
-    msg: "",
+    success: 200,
+    msg: "Register sucessfully",
+    token: token,
     data: user,
   });
 };
@@ -54,8 +59,8 @@ exports.login = async (req, res, next) => {
       });
       return res.json({
         token: token,
-        success: "",
-        msg: "",
+        success: 200,
+        msg: "Login sucessfully",
         data: user,
       });
     } else {
@@ -97,7 +102,7 @@ exports.forgotPassword = async (req, res, next) => {
     });
 
     return res.json({
-      success: "",
+      success: 200,
       msg: "We have sent instructions to reset password over your registered email address.",
     });
   }
@@ -119,7 +124,7 @@ exports.resetPassword = async (req, res, next) => {
           user.password = hashPassword;
           user.save();
           return res.json({
-            success: "",
+            success: 200,
             msg: "Password updated sucessfully",
           });
         } else {
