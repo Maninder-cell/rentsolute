@@ -22,7 +22,7 @@ router.post(
   body("funishing_status").isInt(),
   body("funishing_detail").isString(),
   body("share_property_url").isURL(),
-  body("images.*.caption").isString(),
+  body("images.*.image").isInt(),
   propertyController.addProperty
 );
 
