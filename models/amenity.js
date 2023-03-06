@@ -11,6 +11,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Amenity.belongsToMany(models.Property,{
+        through: models.PropertyAmenity,
+        foreignKey: 'amenity_id',
+        otherKey: 'property_id',
+      })
     }
   }
   Amenity.init({

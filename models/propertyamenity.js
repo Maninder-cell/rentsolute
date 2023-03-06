@@ -11,6 +11,13 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      PropertyAmenity.belongsTo(models.Property,{
+        foreignKey: 'property_id'
+      })
+
+      PropertyAmenity.belongsTo(models.Amenity,{
+        foreignKey: 'amenity_id'
+      })
     }
   }
   PropertyAmenity.init({

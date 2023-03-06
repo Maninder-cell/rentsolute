@@ -10,6 +10,16 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       // define association here
+      Property.belongsToMany(models.Image,{
+        through: models.PropertyImage,
+        foreignKey: 'property_id',
+        otherKey: 'image_id',
+      });
+      Property.belongsToMany(models.Amenity,{
+        through: models.PropertyAmenity,
+        foreignKey: 'property_id',
+        otherKey: 'amenity_id',
+      })
     }
   }
   Property.init({
