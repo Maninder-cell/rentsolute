@@ -10,7 +10,8 @@ module.exports = {
         type: Sequelize.INTEGER
       },
       property_id: {
-        type: Sequelize.INTEGER
+        type: Sequelize.INTEGER,
+        onDelete: 'CASCADE',
       },
       question_id: {
         type: Sequelize.INTEGER

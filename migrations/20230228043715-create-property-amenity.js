@@ -11,6 +11,7 @@ module.exports = {
       },
       property_id: {
         type: Sequelize.INTEGER,
+        onDelete: 'CASCADE',
       },
       amenity_id: {
         type: Sequelize.INTEGER

@@ -11,7 +11,7 @@ module.exports = {
       },
       property_id: {
         type: Sequelize.INTEGER,
-        
+        onDelete: 'CASCADE',
       },
       image_id: {
         type: Sequelize.INTEGER
