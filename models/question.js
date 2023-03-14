@@ -18,6 +18,11 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: 'question_id',
         as: 'Options',
       });
+      Question.belongsToMany(models.Property,{
+        through: models.PropertyQuestion,
+        foreignKey: 'question_id',
+        otherKey: 'property_id'
+      })
     }
   }
   Question.init({

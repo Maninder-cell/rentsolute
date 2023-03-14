@@ -5,7 +5,9 @@ const db = require("../models");
 const Property = db.Property;
 const PropertyImage = db.PropertyImage;
 const Room = db.Room;
+const Amenity = db.Amenity;
 const PropertyAmenity = db.PropertyAmenity;
+const PropertyQuestion = db.PropertyQuestion;
 const Image = db.Image;
 
 exports.addProperty = async (req, res, next) => {
@@ -50,15 +52,53 @@ exports.addProperty = async (req, res, next) => {
       property_id: property.id,
       name: room.name,
       image_id: room.image,
-      room_type: room.type
+      room_type: room.type,
     };
     rooms.push(obj);
   });
 
   await Room.bulkCreate(rooms);
 
+  //Property Question creation
+  let questions = [];
+  req.body.questions.forEach((question) => {
+    let obj = {
+      property_id: property.id,
+      question_id: question.question_id
+    }
+    questions.push(obj);
+  });
+
+  await PropertyQuestion.bulkCreate(questions);
+
+  //Get property with all associated relations
+  const get_property = await Property.findOne({
+    where: { id: property.id },
+    include: [
+      {
+        model: Image,
+        attributes: ["id", "caption", "image"],
+        through: {
+          attributes: [],
+        },
+      },
+      {
+        model: Amenity,
+        attributes: ["id", "name", "icon"],
+        through: {
+          attributes: [],
+        },
+      },
+      {
+        model: Room,
+        attributes: ["id", "name", "room_type"],
+      },
+    ],
+  });
+
   return res.status(200).json({
     msg: "Property created sucessfully",
+    data: get_property,
   });
 };
 

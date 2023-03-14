@@ -19,6 +19,14 @@ module.exports = (sequelize, DataTypes) => {
         through: models.PropertyAmenity,
         foreignKey: 'property_id',
         otherKey: 'amenity_id',
+      });
+      Property.hasMany(models.Room,{
+        foreignKey: 'property_id'
+      })
+      Property.belongsToMany(models.Question,{
+        through: models.PropertyQuestion,
+        foreignKey: 'property_id',
+        otherKey: 'question_id'
       })
     }
   }
@@ -38,7 +46,21 @@ module.exports = (sequelize, DataTypes) => {
     area: DataTypes.STRING,
     funishing_status: DataTypes.INTEGER,
     funishing_detail: DataTypes.STRING,
-    share_property_url: DataTypes.STRING
+    share_property_url: DataTypes.STRING,
+    address: {
+      type: DataTypes.VIRTUAL,
+      get() {
+        return {
+          street:this.street,
+          city:this.city,
+          state:this.state,
+          postal_code:this.postal_code,
+          country:this.country,
+          latitude:this.latitude,
+          longitude:this.longitude
+        };
+      }
+    }
   }, {
     sequelize,
     modelName: 'Property',
