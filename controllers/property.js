@@ -1,5 +1,6 @@
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
+const { where } = require("sequelize");
 require("dotenv").config();
 const db = require("../models");
 const Property = db.Property;
@@ -10,20 +11,10 @@ const PropertyAmenity = db.PropertyAmenity;
 const PropertyQuestion = db.PropertyQuestion;
 const Image = db.Image;
 
-exports.addProperty = async (req, res, next) => {
-  const errors = validationResult(req);
-
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
-  }
-
-  const user_property = { ...req.body, user_id: req.user.id };
-
-  const property = await Property.create(user_property);
-
+const dbProperty = async(_images,_amenities,_rooms,_questions,property) => {
   //Property images creation
   let images = [];
-  req.body.images.forEach((image) => {
+  _images.forEach((image) => {
     let obj = {
       image_id: image.image,
       property_id: property.id,
@@ -35,7 +26,7 @@ exports.addProperty = async (req, res, next) => {
 
   //Property amenities creation
   let amenities = [];
-  req.body.amenities.forEach((amenity) => {
+  _amenities.forEach((amenity) => {
     let obj = {
       amenity_id: amenity,
       property_id: property.id,
@@ -47,7 +38,7 @@ exports.addProperty = async (req, res, next) => {
 
   //Property rooms creation
   let rooms = [];
-  req.body.rooms.forEach((room) => {
+  _rooms.forEach((room) => {
     let obj = {
       property_id: property.id,
       name: room.name,
@@ -61,7 +52,7 @@ exports.addProperty = async (req, res, next) => {
 
   //Property Question creation
   let questions = [];
-  req.body.questions.forEach((question) => {
+  _questions.forEach((question) => {
     let obj = {
       property_id: property.id,
       question_id: question.question_id
@@ -72,7 +63,7 @@ exports.addProperty = async (req, res, next) => {
   await PropertyQuestion.bulkCreate(questions);
 
   //Get property with all associated relations
-  const get_property = await Property.findOne({
+  const get_property = Property.findOne({
     where: { id: property.id },
     include: [
       {
@@ -96,11 +87,54 @@ exports.addProperty = async (req, res, next) => {
     ],
   });
 
+  return get_property;
+}
+
+exports.addProperty = async (req, res, next) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const user_property = { ...req.body, user_id: req.user.id };
+
+  const property = await Property.create(user_property);
+
+  const get_property = await dbProperty(req.body.images,req.body.amenities,req.body.rooms,req.body.questions,property);
+
   return res.status(200).json({
     msg: "Property created sucessfully",
     data: get_property,
   });
 };
+
+exports.updateProperty = async (req, res, next) => {
+  const errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const property = await Property.findOne({where: {id: req.params.id,user_id: req.user.id}});
+
+  property.update(req.body);
+
+  const get_property = await dbProperty(req.body.images,req.body.amenities,req.body.rooms,req.body.questions,property);
+
+  return res.status(200).json({
+    msg: "Property updated sucessfully",
+    data: get_property,
+  });
+};
+
+exports.deleteProperty = async(req,res,next) => {
+  const property = await Property.destroy({where: {id: req.params.id,user_id: req.user.id}});
+
+  return res.status(200).json({
+    msg: "We have deleted your property successfully",
+  });
+}
 
 exports.saveImage = async (req, res, next) => {
   const errors = validationResult(req);
