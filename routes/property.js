@@ -64,4 +64,7 @@ router.post(
     .withMessage("Please only submit image."),
   propertyController.saveImage
 );
+
+router.get("/get_near_properties",propertyController.getNearProperties);
+
 module.exports = router;

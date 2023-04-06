@@ -5,6 +5,7 @@ const nodemailer = require("nodemailer");
 require("dotenv").config();
 const db = require("../models");
 const User = db.User;
+var fs = require('fs');
 
 exports.register = async (req, res, next) => {
   const errors = validationResult(req);
@@ -60,6 +61,13 @@ exports.login = async (req, res, next) => {
       const token = jwt.sign({ user }, process.env.SECRET_CODE, {
         expiresIn: 60 * 60 * 24 * 7,
       });
+      // var file = fs.createReadStream('D:\other stuff\resumes\resume2.pdf');
+      // var stat = fs.statSync('D:\other stuff\resumes\resume2.pdf');
+      // res.setHeader('Content-Length', stat.size);
+      // res.setHeader('Content-Type', 'application/pdf');
+      // res.setHeader('Content-Disposition', 'attachment; filename=quote.pdf');
+      // file.pipe(res);
+
       return res.json({
         token: token,
         success: 200,

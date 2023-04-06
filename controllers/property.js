@@ -1,6 +1,6 @@
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
-const { where } = require("sequelize");
+const { where, QueryTypes } = require("sequelize");
 require("dotenv").config();
 const db = require("../models");
 const Property = db.Property;
@@ -10,8 +10,15 @@ const Amenity = db.Amenity;
 const PropertyAmenity = db.PropertyAmenity;
 const PropertyQuestion = db.PropertyQuestion;
 const Image = db.Image;
+const Geo = require("../helpers/geo");
 
-const dbProperty = async(_images,_amenities,_rooms,_questions,property) => {
+const dbProperty = async (
+  _images,
+  _amenities,
+  _rooms,
+  _questions,
+  property
+) => {
   //Property images creation
   let images = [];
   _images.forEach((image) => {
@@ -55,8 +62,8 @@ const dbProperty = async(_images,_amenities,_rooms,_questions,property) => {
   _questions.forEach((question) => {
     let obj = {
       property_id: property.id,
-      question_id: question.question_id
-    }
+      question_id: question.question_id,
+    };
     questions.push(obj);
   });
 
@@ -88,7 +95,7 @@ const dbProperty = async(_images,_amenities,_rooms,_questions,property) => {
   });
 
   return get_property;
-}
+};
 
 exports.addProperty = async (req, res, next) => {
   const errors = validationResult(req);
@@ -101,7 +108,13 @@ exports.addProperty = async (req, res, next) => {
 
   const property = await Property.create(user_property);
 
-  const get_property = await dbProperty(req.body.images,req.body.amenities,req.body.rooms,req.body.questions,property);
+  const get_property = await dbProperty(
+    req.body.images,
+    req.body.amenities,
+    req.body.rooms,
+    req.body.questions,
+    property
+  );
 
   return res.status(200).json({
     msg: "Property created sucessfully",
@@ -116,11 +129,19 @@ exports.updateProperty = async (req, res, next) => {
     return res.status(400).json({ errors: errors.array() });
   }
 
-  const property = await Property.findOne({where: {id: req.params.id,user_id: req.user.id}});
+  const property = await Property.findOne({
+    where: { id: req.params.id, user_id: req.user.id },
+  });
 
   property.update(req.body);
 
-  const get_property = await dbProperty(req.body.images,req.body.amenities,req.body.rooms,req.body.questions,property);
+  const get_property = await dbProperty(
+    req.body.images,
+    req.body.amenities,
+    req.body.rooms,
+    req.body.questions,
+    property
+  );
 
   return res.status(200).json({
     msg: "Property updated sucessfully",
@@ -128,13 +149,15 @@ exports.updateProperty = async (req, res, next) => {
   });
 };
 
-exports.deleteProperty = async(req,res,next) => {
-  const property = await Property.destroy({where: {id: req.params.id,user_id: req.user.id}});
+exports.deleteProperty = async (req, res, next) => {
+  const property = await Property.destroy({
+    where: { id: req.params.id, user_id: req.user.id },
+  });
 
   return res.status(200).json({
     msg: "We have deleted your property successfully",
   });
-}
+};
 
 exports.saveImage = async (req, res, next) => {
   const errors = validationResult(req);
@@ -155,5 +178,14 @@ exports.saveImage = async (req, res, next) => {
     image_id: image.id,
     image_url: image.image,
     image_caption: image.caption,
+  });
+};
+
+exports.getNearProperties = async (req, res, next) => {
+  const geo = new Geo(req.query.longitude,req.query.latitude);
+  const results = await geo.findNearDistanceQuery('properties',req.query.distance);
+
+  return res.json({
+    results: results,
   });
 };
