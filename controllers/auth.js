@@ -5,7 +5,7 @@ const nodemailer = require("nodemailer");
 require("dotenv").config();
 const db = require("../models");
 const User = db.User;
-var fs = require('fs');
+var fs = require("fs");
 
 exports.register = async (req, res, next) => {
   const errors = validationResult(req);
@@ -35,7 +35,7 @@ exports.register = async (req, res, next) => {
     expiresIn: 60 * 60 * 24 * 7,
   });
 
-  const {password, ...user_res} = user.dataValues;
+  const { password, ...user_res } = user.dataValues;
 
   return res.json({
     success: 200,
@@ -61,12 +61,6 @@ exports.login = async (req, res, next) => {
       const token = jwt.sign({ user }, process.env.SECRET_CODE, {
         expiresIn: 60 * 60 * 24 * 7,
       });
-      // var file = fs.createReadStream('D:\other stuff\resumes\resume2.pdf');
-      // var stat = fs.statSync('D:\other stuff\resumes\resume2.pdf');
-      // res.setHeader('Content-Length', stat.size);
-      // res.setHeader('Content-Type', 'application/pdf');
-      // res.setHeader('Content-Disposition', 'attachment; filename=quote.pdf');
-      // file.pipe(res);
 
       return res.json({
         token: token,
@@ -139,9 +133,7 @@ exports.resetPassword = async (req, res, next) => {
             msg: "Password updated sucessfully",
           });
         } else {
-          return res
-            .status(400)
-            .json({ errors: { error: "User not found" } });
+          return res.status(400).json({ errors: { error: "User not found" } });
         }
       }
     } catch (err) {

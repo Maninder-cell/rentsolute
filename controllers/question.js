@@ -28,10 +28,12 @@ exports.addQuestion = async (req, res, next) => {
 
   const getQuestion = await Question.findOne({
     where: { id: question.id },
-    include: [{
+    include: [
+      {
         model: Option,
-        as: 'Options',
-    }],
+        as: "Options",
+      },
+    ],
   });
 
   return res.json({
@@ -41,13 +43,15 @@ exports.addQuestion = async (req, res, next) => {
   });
 };
 
-exports.getQuestions = async(req, res, next) => {
+exports.getQuestions = async (req, res, next) => {
   const questions = await Question.findAll({
-    where : {user_id: req.user.id},
-    include: [{
+    where: { user_id: req.user.id },
+    include: [
+      {
         model: Option,
-        as: 'Options',
-    }],
+        as: "Options",
+      },
+    ],
   });
 
   return res.json({

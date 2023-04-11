@@ -13,7 +13,7 @@ class Geo {
     return deg * (Math.PI / 180);
   }
 
-  findNearDistance(location,maxDistance) {
+  findNearDistance(location, maxDistance) {
     const lat1 = this.#deg2rad(this.latitude);
     const lon1 = this.#deg2rad(this.longitude);
     const lat2 = this.#deg2rad(location.latitude);
@@ -22,22 +22,25 @@ class Geo {
     const dLat = lat2 - lat1;
     const dLon = lon2 - lon1;
 
-    const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) + Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+    const a =
+      Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+      Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
     const distance = Geo.#R * c;
 
     if (distance <= maxDistance) {
-      return location
-    }
-    else{
-        return false;
+      return location;
+    } else {
+      return false;
     }
   }
 
-  async findNearDistanceQuery(table_name,distance){
+  async findNearDistanceQuery(table_name, distance) {
     const [results, metadata] = await db.sequelize.query(
-      `SELECT *, (${Geo.#R} * acos(cos(radians(:latitude))*cos(radians(latitude))*cos(radians(longitude)-radians(:longitude))+sin(radians(:latitude))*sin(radians(latitude)))) AS distance FROM ${table_name} HAVING distance <= :maxDistance ORDER BY distance ASC`,
+      `SELECT *, (${
+        Geo.#R
+      } * acos(cos(radians(:latitude))*cos(radians(latitude))*cos(radians(longitude)-radians(:longitude))+sin(radians(:latitude))*sin(radians(latitude)))) AS distance FROM ${table_name} HAVING distance <= :maxDistance ORDER BY distance ASC`,
       {
         replacements: {
           latitude: this.latitude,

@@ -127,7 +127,7 @@ exports.suggestedQuestions = async (req, res, next) => {
       {
         model: Option,
         as: "Options",
-        attributes : ["text","preferred"]
+        attributes: ["text", "preferred"],
       },
     ],
   });
