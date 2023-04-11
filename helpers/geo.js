@@ -37,7 +37,15 @@ class Geo {
 
   async findNearDistanceQuery(table_name,distance){
     const [results, metadata] = await db.sequelize.query(
-      `SELECT *, (${Geo.#R} * acos(cos(radians(${this.latitude}))*cos(radians(latitude))*cos(radians(longitude)-radians(${this.longitude}))+sin(radians(${this.latitude}))*sin(radians(latitude)))) AS distance FROM ${table_name} HAVING distance <= ${distance} ORDER BY distance ASC`
+      `SELECT *, (${Geo.#R} * acos(cos(radians(:latitude))*cos(radians(latitude))*cos(radians(longitude)-radians(:longitude))+sin(radians(:latitude))*sin(radians(latitude)))) AS distance FROM ${table_name} HAVING distance <= :maxDistance ORDER BY distance ASC`,
+      {
+        replacements: {
+          latitude: this.latitude,
+          longitude: this.longitude,
+          maxDistance: distance,
+        },
+        type: QueryTypes.SELECT,
+      }
     );
 
     return results;

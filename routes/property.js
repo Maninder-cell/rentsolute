@@ -52,7 +52,6 @@ router.post('/delete_property/:id',propertyController.deleteProperty);
 router.post(
   "/image",
   upload.single("image"),
-  body("caption").isString(),
   body("image")
     .custom((value, { req }) => {
       if (req.file.mimetype.startsWith('image/')) {
@@ -66,5 +65,9 @@ router.post(
 );
 
 router.get("/get_near_properties",propertyController.getNearProperties);
+
+router.get("/dashboard",propertyController.dashboard);
+
+router.get("/suggested_questions",propertyController.suggestedQuestions);
 
 module.exports = router;

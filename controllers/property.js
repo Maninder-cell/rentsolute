@@ -6,6 +6,8 @@ const db = require("../models");
 const Property = db.Property;
 const PropertyImage = db.PropertyImage;
 const Room = db.Room;
+const Question = db.Question;
+const Option = db.Option;
 const Amenity = db.Amenity;
 const PropertyAmenity = db.PropertyAmenity;
 const PropertyQuestion = db.PropertyQuestion;
@@ -97,6 +99,44 @@ const dbProperty = async (
   return get_property;
 };
 
+exports.dashboard = async (req, res, next) => {
+  const { count: tenanted_properties_count, rows: tenanted_properties } =
+    await Property.findAndCountAll({
+      where: { user_id: req.user.id, tenancy_status: 1 },
+    });
+
+  const { count: vacant_properties_count, rows: vacant_properties } =
+    await Property.findAndCountAll({
+      where: { user_id: req.user.id, tenancy_status: 0 },
+    });
+
+  return res.status(200).json({
+    data: {
+      tenanted_properties: tenanted_properties,
+      vacant_properties: vacant_properties,
+      tenanted_properties_count: tenanted_properties_count,
+      vacant_properties_count: vacant_properties_count,
+    },
+  });
+};
+
+exports.suggestedQuestions = async (req, res, next) => {
+  const suggested_questions = await Question.findAll({
+    where: { user_id: null },
+    include: [
+      {
+        model: Option,
+        as: "Options",
+        attributes : ["text","preferred"]
+      },
+    ],
+  });
+
+  return res.status(200).json({
+    suggested_questions: suggested_questions,
+  });
+};
+
 exports.addProperty = async (req, res, next) => {
   const errors = validationResult(req);
 
@@ -182,8 +222,11 @@ exports.saveImage = async (req, res, next) => {
 };
 
 exports.getNearProperties = async (req, res, next) => {
-  const geo = new Geo(req.query.longitude,req.query.latitude);
-  const results = await geo.findNearDistanceQuery('properties',req.query.distance);
+  const geo = new Geo(req.query.longitude, req.query.latitude);
+  const results = await geo.findNearDistanceQuery(
+    "properties",
+    req.query.distance
+  );
 
   return res.json({
     results: results,
