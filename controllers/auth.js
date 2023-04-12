@@ -147,3 +147,23 @@ exports.resetPassword = async (req, res, next) => {
       .json({ errors: { error: "Password should be match" } });
   }
 };
+
+exports.profile = async (req,res,next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  const user = await User.findOne({where : {id: req.user.id}});
+  user.firstName = req.body.firstName;
+  user.lastName = req.body.firstName;
+  user.phone_no = req.body.phone_no;
+  user.address = req.body.address;
+
+  user.save();
+
+  return res.status(200).json({
+    msg: "Profile updated sucessfully",
+    data: user
+  });
+}
