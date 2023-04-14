@@ -27,7 +27,7 @@
     "sequelize": "^6.28.0"
   },
   "engines": {
-    "node": ">=14 <15"
+    "node": ">=16.14"
   },
   "devDependencies": {
     "nodemon": "^2.0.20",
