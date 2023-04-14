@@ -6,6 +6,8 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 .pnpm-debug.log*
+credentials.json
+token.json
 
 #ignore public upload folder
 uploads/
