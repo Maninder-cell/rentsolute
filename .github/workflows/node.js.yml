@@ -47,7 +47,7 @@ jobs:
         # MYSQL_USER - create the specified user with superuser power for created database
         mysql user: superuser
         # MYSQL_PASSWORD - specified superuser password which user is power for created database
-        mysql password:
+        mysql password: root
 
     - run: npm ci
     - run: npm run build --if-present
