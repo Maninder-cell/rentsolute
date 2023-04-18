@@ -23,4 +23,8 @@ app.use("/amenity", verify, amenityRoutes);
 app.use("/question", verify, questionRoutes);
 app.use("/admin", verify, adminRoutes);
 
-app.listen(3000);
+if (require.main === module) {
+    app.listen(3000);
+}
+
+module.exports = app;
