@@ -43,11 +43,11 @@ jobs:
         # MYSQL_ROOT_PASSWORD - root superuser password
         mysql root password:
         # MYSQL_DATABASE - name for the default database that is created
-        mysql database: database_test
+        mysql database:
         # MYSQL_USER - create the specified user with superuser power for created database
-        mysql user: new
+        mysql user:
         # MYSQL_PASSWORD - specified superuser password which user is power for created database
-        mysql password: 123
+        mysql password:
 
     - run: npm ci
     - run: npm run build --if-present
