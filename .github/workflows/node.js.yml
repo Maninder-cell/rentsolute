@@ -41,11 +41,11 @@ jobs:
         # Version of MySQL to use
         mysql version: # optional, default is latest
         # MYSQL_ROOT_PASSWORD - root superuser password
-        mysql root password:
+        mysql root password: password
         # MYSQL_DATABASE - name for the default database that is created
         mysql database:
         # MYSQL_USER - create the specified user with superuser power for created database
-        mysql user:
+        mysql user: root
         # MYSQL_PASSWORD - specified superuser password which user is power for created database
         mysql password:
 
